@@ -16,4 +16,4 @@ perf-on ──► perf-design ──► perf-run ──► perf-analyze ──�
 
 Shared conventions: single report file `report/perf_report.md` (appended §1→§2→§3; §4 Task 3 is human-written at closeout), audit log at `audit/AI_Audit_Report.md` (Entry format per homework template), results under `jmeter/results/<Scenario>/`, one git commit per stage, backend API via JMeter only. After `analyze: done`, perf-on **Closeout** re-scans the requirement and packages the Moodle zip — the ENTIRE project goes to GitHub, but the zip is a FILTERED subset (table in perf-on).
 
-Usage: invoke **"perf-on"** to see progress and get the next stage, or call a stage skill directly. Human-only evidence (demo video, live screenshots, dxdiag) is reminded by the kit but cannot be automated.
+Usage: invoke **"perf-on <workflow>"** (e.g. `perf-on admin login → GET /api/admin/orders → GET /api/orders/:id → PUT status`) to start a kit run for any API workflow; re-invoke without the argument to continue the current one. Individual stage skills can also be called directly. Human-only evidence (demo video, live screenshots, dxdiag) is reminded by the kit but cannot be automated.

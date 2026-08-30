@@ -1,9 +1,17 @@
 ---
 name: perf-on
-description: Orchestrates the 3-stage JMeter performance-testing pipeline for HW05 (design → run → analyze), tracks progress in kit-state.md, and enforces the AI Audit Report entry after every stage. Use when the user says "perf-on", "start/continue the kit", or asks which stage is next.
+description: Orchestrates the 3-stage JMeter performance-testing pipeline for HW05 (design → run → analyze) for any backend API workflow passed as its argument, tracks progress in kit-state.md, and enforces the AI Audit Report entry after every stage. Use when the user says "perf-on <workflow description>", "start/continue the kit", or asks which stage is next.
 ---
 
 # perf-on — Orchestrator
+
+```
+/perf-on [<workflow>] [<plan-type>]
+```
+- `<workflow>` (optional): free text naming the E2E API workflow, e.g. `admin login → GET /api/admin/orders → GET /api/orders/:id → PUT /api/admin/orders/:id/status`. Present in the prompt → use it and store it in the `kit-state.md` header. Missing → reuse the one stored in `kit-state.md`; if none → **ask the human**. Never source the workflow from `plan/checklist.md` — that file is the human's personal tracker, not a kit input.
+- `<plan-type>` (optional): `Load` | `Stress` | `Spike`. Present → scope the stage to that single plan/scenario. Missing → **ask the human** which plan to work on next (all three are eventually required for submission). "all" → the full set.
+
+Parse both from the free-form prompt flexibly; confirm your interpretation with the human before starting.
 
 Drives ONE stage at a time, pauses for human approval, appends the audit entry. Pipeline:
 
@@ -30,9 +38,11 @@ kb/                             # READ-ONLY input: spec.md (feature spec) +
 
 ## On each invocation
 
-1. Read `kit-state.md` (create it empty if missing). Report stage statuses, propose the next pending stage.
-2. Confirm with the human, then direct to the stage skill: `/perf-design` · `/perf-run` · `/perf-analyze`.
-3. Stage skills update `kit-state.md`, append `report/perf_report.md`, and append the audit entry themselves. Never redo an approved stage.
+1. **Parse the prompt** for `<workflow>` and `<plan-type>` (see Arguments above). Ask the human for whatever is missing instead of guessing; never hardcode either into any skill.
+2. Store the resolved workflow in the `kit-state.md` header; note the active plan-type.
+3. Read `kit-state.md` (create it if missing). Report stage statuses, propose the next pending stage.
+4. Confirm with the human, then direct to the stage skill (pass workflow + plan-type along): `/perf-design` · `/perf-run` · `/perf-analyze`.
+5. Stage skills update `kit-state.md`, append `report/perf_report.md`, and append the audit entry themselves. Never redo an approved stage.
 
 ## Audit entry (append to `audit/AI_Audit_Report.md` after EVERY stage + significant interaction)
 
@@ -70,9 +80,9 @@ Entry format (numbering continues across the file):
 
 ## Hard rules
 
-- **R1** One shared E2E workflow (login → browse/search → product detail → add-to-cart → checkout) across all 3 plans; plans differ ONLY in load profile + listener.
+- **R1** One shared E2E workflow — the one resolved from the prompt / `kit-state.md` — across all 3 plans; plans differ ONLY in load profile + listener. All three plan types (Load, Stress, Spike) are required for submission; the kit simply allows working on them one at a time.
 - **R2** Plan filenames exactly `{SID}_{ScenarioType}_{YYYYMMDD}.jmx`.
-- **R3** CSV-driven requests (`users.csv` ≥5 accounts, `products.csv`); no hardcoded credentials.
+- **R3** CSV-driven requests (credentials + workflow data CSVs, values must exist in the live SUT); no hardcoded credentials or IDs.
 - **R4** 3 distinct listeners across plans (Load: Aggregate Report · Stress: Summary Report · Spike: View Results Tree).
 - **R5** Raw `.jtl` kept in FULL; HTML report generated from it.
 - **R6** Account-lockout resets between runs, documented.

@@ -5,14 +5,16 @@ description: Stage 2 of the HW05 kit. Executes the Load, Stress, and Spike scena
 
 # Stage 2 — run (3 scenarios + endurance)
 
-Goal: all runs executed with complete evidence; `report/perf_report.md` §2. The kit drives; the human clicks JMeter, takes screenshots, and records the demo video (R8).
+Goal: runs executed with complete evidence; `report/perf_report.md` §2. The kit drives; the human clicks JMeter, takes screenshots, and records the demo video (R8).
+
+Scope: the plan-type passed by `/perf-on` (`Load` | `Stress` | `Spike` | all). Missing → ask the human which scenario to run next. All three scenarios are required for submission; endurance follows the last of them.
 
 ## Pre-flight (before the first run)
 
 - SUT up, DB in known state, no locked accounts (verify with one manual login).
 - Hardware evidence ONCE: dxdiag screenshot + spec table (hostname must match previous homeworks) → `jmeter/results/hardware/`.
 
-## Per scenario (Load → Stress → Spike)
+## Per scenario (in scope; default order Load → Stress → Spike)
 
 1. Task Manager open beside JMeter — same frame for screenshot + video. Start recording if due (Vietnamese narration, human's job).
 2. Run. GUI for video evidence; CLI option for a stable log:
@@ -28,7 +30,7 @@ Goal: all runs executed with complete evidence; `report/perf_report.md` §2. The
 6. Sanity check the `.jtl`: rows exist, duration spans the run, not all-fail.
 7. Genuine bug or perf issue (error responses, crashes, functional regression)? → file a GitHub Issue with screenshot; note the issue link in §2.2.
 
-## Endurance (after the 3 scenarios)
+## Endurance (after the last in-scope scenario)
 
 - Clone the Load plan, duration 600–900 s at sustained load → `jmeter/results/Endurance/`.
 - Compute the threshold from the raw log (1-minute windows): last window with error % < 1, p95 ≤ 2× first-window p95, throughput ±10% → max stable RPS + memory ceiling = endurance threshold.

@@ -11,14 +11,16 @@ Goal: endpoint map → 3 named `.jmx` plans → reviewed, with AI mistakes docum
 
 - **kb (read first, READ-ONLY — never edit):** `kb/api_specification.md` = endpoint reference (base URL `http://localhost:3000`, methods, payloads, auth header `Authorization: Bearer <token>`); `kb/spec.md` = feature spec (behaviour basis, incl. the 3-fail account lockout).
 - Running SUT to verify kb claims against reality.
-- From the human: `{SID}`, `{DATE}` (YYYYMMDD), and group members' workflow choices (must not duplicate).
+- From the human: `{SID}`, `{DATE}` (YYYYMMDD).
+- The workflow to test — passed down from `/perf-on` (also recorded in the `kit-state.md` header; if absent, ask the human). Never hardcode a specific workflow into this skill.
+- Optional plan-type scope — `Load` | `Stress` | `Spike` | all (default). Passed down from `/perf-on`; if absent, ask the human which plan(s) to generate.
 
 ## Steps
 
-1. **Context.** From `kb/api_specification.md` + `kb/spec.md`, map the SUT endpoints for: login (note 3-fail lockout), product list/search, product detail, add-to-cart, checkout. Note the session mechanism (JWT via `Authorization: Bearer`) and which response fields must be extracted for later requests. Then **verify each endpoint live** with a quick cURL/Postman probe; any kb ↔ live mismatch (status, payload shape, behaviour) is recorded as a ⚠️ bug candidate in §1.1 — do not adjust kb.
-2. **CSV data.** `jmeter/data/users.csv` (≥5 accounts — spreads threads to limit lockout collisions) and `jmeter/data/products.csv` (existing product IDs / search keywords).
-3. **Base plan.** Thread Group · HTTP Request Defaults · Cookie/Header Manager · 2× CSV Data Set Config · requests in E2E order · post-processors for token/cart/order dependencies · response-code + content assertions (login content assertion makes lockouts visible) · think-time Timer.
-4. **Clone ×3** — change ONLY Thread Group + listener; save to `jmeter/plans/` as `{SID}_{Load|Stress|Spike}_{DATE}.jmx` (R2):
+1. **Context.** From `kb/api_specification.md` + `kb/spec.md`, map the endpoints of the assigned workflow (one auth-heavy, one read-heavy, one transactional). Note the session mechanism (JWT via `Authorization: Bearer`) and which response fields must be extracted for later requests (tokens, entity IDs). Also note workflow-specific risks: few/shared accounts → lockout exposure; requests that consume or mutate state → data setup & per-iteration data strategy. Then **verify each endpoint live** with a quick cURL/Postman probe; any kb ↔ live mismatch (status, payload shape, behaviour) is recorded as a ⚠️ bug candidate in §1.1 — do not adjust kb.
+2. **CSV data.** `jmeter/data/` — credentials CSV + workflow data CSV (IDs/keys that actually exist in the live SUT). If few accounts exist, document how lockout risk is mitigated.
+3. **Base plan.** Thread Group · HTTP Request Defaults · HTTP Header Manager (Bearer token) · CSV Data Set Configs · requests in the assigned workflow order · post-processors for token/entity-ID dependencies · response-code + content assertions (login content assertion makes lockouts visible) · think-time Timer.
+4. **Clone per the requested scope** — all 3 types by default, or just the single type passed by `/perf-on` (the remaining types are generated on later invocations; the base workflow is reused, so later clones differ ONLY in Thread Group + listener). Save to `jmeter/plans/` as `{SID}_{Load|Stress|Spike}_{DATE}.jmx` (R2):
 
    | Plan | Threads | Ramp-up | Duration | Listener (R4) |
    |---|---|---|---|---|
@@ -48,6 +50,14 @@ Sources: kb/spec.md + kb/api_specification.md, verified live on <YYYY-MM-DD>
 | # | What was wrong | Impact | Fix | Why AI missed it |
 ```
 
+## Exit checklist
+
+- [ ] Requested `.jmx` file(s) named exactly `{SID}_{ScenarioType}_{DATE}.jmx`; once all 3 exist, they differ ONLY in Thread Group + listener
+- [ ] CSVs wired and every ID/credential exists in the live SUT
+- [ ] Extractors + assertions present
+- [ ] 3 distinct listeners across plans (verify once all 3 exist)
+- [ ] `report/perf_report.md` §1 written
+
 ## Human gate & bookkeeping
 
-Human approves plans → update `kit-state.md` (`design: done`) · append audit entry (perf-on format) · git commit. Next: `/perf-run`.
+Human approves plan(s) → update `kit-state.md` (`design: done`, or per-type when scoped) · append audit entry (perf-on format) · git commit. Next: `/perf-run`.

@@ -7,9 +7,11 @@ description: Stage 3 of the HW05 kit (Task 2). Computes ground-truth metrics fro
 
 Goal: `report/perf_report.md` §3 = AI analysis + misinterpretation hunt + optimization judgement.
 
+Scope: the plan-type passed by `/perf-on` (`Load` | `Stress` | `Spike` | all). Missing → ask the human which scenario's log to analyse. Task 2 is complete only once all three available logs are analysed.
+
 ## Steps
 
-1. **Ground truth FIRST — paste straight into report §3.1 (no separate metrics files).** Per scenario:
+1. **Ground truth FIRST — paste straight into report §3.1 (no separate metrics files).** Per in-scope scenario:
    ```bash
    python .agents/skills/perf-analyze/scripts/jtl_stats.py "jmeter/results/{Scenario}/result.jtl"
    ```
