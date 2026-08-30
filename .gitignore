@@ -1,0 +1,8 @@
+# JMeter runtime noise (regenerated on every launch; real evidence lives in jmeter/results/)
+jmeter.log
+*.log
+saves/
+
+# OS junk
+Thumbs.db
+Desktop.ini
