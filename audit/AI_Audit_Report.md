@@ -31,3 +31,31 @@ Stage 1 (perf-design) executed for plan-type Load:
 ```
 
 ---
+
+## Entry 2
+
+### AI tool name
+* Qoder (teach-mode Stage 2 + endurance analysis, HW05 kit)
+
+### Date and time
+* 2026-08-31 (session spanning 08-30 evening to 08-31)
+
+### Prompt
+```text
+teach me step by step how to run manually (Stage 2), do not do it yourself;
+then: determine the endurance threshold, run a 10-min soak, analyze it;
+then: clean up unneeded files, design the Stress/Spike workflow;
+then: commit the Load + endurance work in meaningful per-step commits
+```
+
+### The AI output
+```text
+Stage 2 (perf-run) executed in teach-mode: human ran the scenarios in the JMeter GUI, AI verified and analyzed:
+- Load run verified: 400 samples, 0.00% errors, 20/20 active threads, HTML report complete, same-frame screenshots + hardware evidence (DESKTOP-N7HAG7L) accepted; leftover diag scripts deleted
+- Endurance: AI wrote jmeter/scripts/endurance_windows.py (1-min windows + threshold rule); human ran 10-min soak (10 threads, scheduler 600 s, ~2000 seeded orders). Result: ~12.2 RPS sustained, 0% errors, p95 flat 22-29 ms; memory ceiling ~71 MB (backend node.exe identified as owner of port 3000; idle growth to ~110 MB flagged as leak candidate). report/endurance_threshold.md written
+- Cleanup: deleted endurance working clone, run.log, jmeter.log; removed an Endurance thread group that had leaked into the Load plan (official Load .jtl verified untouched); fixed Stress ramp/loops defect (30/3 -> 10/6, same ramp>lifetime trap as Load - recorded as AI mistake #3 in report 1.3); set Stress/Spike listener filenames; created results dirs
+- Diagnosed human's accidental GUI edit of the Load plan as unsaved in-memory change (disk file pristine) and taught the discard/reopen drill
+- 7 per-step git commits created (design / scripts / report / audit / Load run / endurance / threshold); Stress+Spike plans left unstaged for their own runs
+```
+
+---
