@@ -59,3 +59,92 @@ Stage 2 (perf-run) executed in teach-mode: human ran the scenarios in the JMeter
 ```
 
 ---
+
+## Entry 3
+
+### AI tool name
+* Qoder (run verification + commits)
+
+### Date and time
+* 2026-08-31
+
+### Prompt
+```text
+I have just run for stress test plan. Before running for spike, please help me verify the result
+and split meaningful commits for stress test plan task
+```
+
+### The AI output
+```text
+- Stress run verified: 1,440 samples (60x6x4), 0.00% errors, 60/60 active threads, 28.7 s; latency 3-4x Load (p95 46-91 ms) but zero failures = "degraded but never broke"; HTML report + 3 screenshots cross-checked against the .jtl
+- Committed in two steps: test(perf): add Stress plan / add Stress run results and evidence
+```
+
+---
+
+## Entry 4
+
+### AI tool name
+* Qoder (data integrity + Spike verification)
+
+### Date and time
+* 2026-08-31
+
+### Prompt
+```text
+after seed, orders.csv is oke?
+then revify for me the result [Spike]
+```
+
+### The AI output
+```text
+- orders.csv integrity checked before Spike: 140 pending ids (100 fresh + leftovers, all exported by the seed filter); spot-check via live API confirmed status=pending; AI's first check used a wrong JSON property path ($o.order.status) and was self-corrected to the root-level status field
+- Spike run verified: 320 samples (80x1x4), 0.00% errors, 80/80 threads in a 3.5 s burst (~92.6 RPS); HTML report + screenshots present
+- Evidence nit flagged to the human: tool.png captured an earlier run (08:56:50) while the official .jtl holds a second run (08:57:14) - both green; human accepted as-is
+```
+
+---
+
+## Entry 5
+
+### AI tool name
+* Qoder (demo preparation)
+
+### Date and time
+* 2026-09-01
+
+### Prompt
+```text
+toi dang can demo bo agent skill - hay giup toi biet cac skill trong bo kit va vai tro
+bay gio toi can demo chay 3 test plan manually: step by step, command seed, command sinh html + goi y script demo
+```
+
+### The AI output
+```text
+- Produced the kit map for the demo narration: perf-on (orchestrator, workflow-as-argument, human gates, audit enforcement) / perf-design (Stage 1) / perf-run (Stage 2) / perf-analyze (Stage 3), plus shared state files (kit-state.md, audit, report)
+- Wrote the per-plan manual re-run ceremony (seed counts 150/400/100, HTML report commands, expected sample/thread counts) and a >=6-min Vietnamese demo script mapping every project file to its role
+```
+
+---
+
+## Entry 6
+
+### AI tool name
+* Qoder (post-demo revert + Spike commits)
+
+### Date and time
+* 2026-09-01
+
+### Prompt
+```text
+toi vua demo chay manual lai cho load va stress... bay gio toi se revert lai voi dung cai ta commit - giup toi
+ok [commit Spike], dong thoi gom doan chat vao ai audit log
+```
+
+### The AI output
+```text
+- Demo re-runs had overwritten tracked artifacts; reverted with git restore (orders.csv, Load plan re-saved by GUI, results/Load incl. HTML report, results/Stress/result.jtl) back to the committed official state; verified Load=400 and Stress=1,440 rows again; Spike artifacts untouched (untracked)
+- Committed Spike in two steps: test(perf): add Spike plan / add Spike run results and evidence - all three scenarios now committed; working tree clean
+```
+
+---
