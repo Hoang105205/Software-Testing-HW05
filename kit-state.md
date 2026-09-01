@@ -10,13 +10,15 @@
 | 3 | Transactional | `PUT /api/admin/orders/:id/status` (`pending → confirmed → shipping`) |
 
 ## Active scope
-- plan-type: **Load** (submission later also requires Stress + Spike)
+- plan-type: **all** (Load + Stress + Spike) — submission scope complete
 - mode: one stage at a time, human gate between stages
 
 ## Stages
-- [ ] design (perf-design) ← Load plan generated + smoke-verified, AWAITING HUMAN APPROVAL
-- [ ] run (perf-run)
-- [ ] analyze (perf-analyze)
+- [x] design (perf-design) — 3 plans + CSVs + §1 (incl. §1.3 AI mistakes), human-approved
+- [x] run (perf-run) — Load/Stress/Spike official runs + endurance soak, evidence committed
+- [x] analyze (perf-analyze) — §3 (ground truth + AI analysis + hunt + judgement) + §4 Task 3 written — **pipeline complete**
+
+Remaining human-only items: AI Critique (200–300 words), demo video upload, README + packaging (zip Moodle vs GitHub).
 
 ## Inputs from human
 - `{SID}` = 23127047 · `{DATE}` = 20260830
@@ -24,3 +26,9 @@
 
 ## Audit entries
 - Entry 1 (2026-08-30 13:55) — perf-design Load: plan + CSVs + §1, 2 AI defects found & fixed, 2 bug candidates
+- Entry 2 — teach-mode run stage, Load verification, endurance analysis, cleanup/decontamination, commits
+- Entry 3 — Stress run verification + commits
+- Entry 4 — orders.csv integrity check + Spike run verification
+- Entry 5 — demo kit explanation + manual re-run ceremony + demo script
+- Entry 6 — post-demo revert + Spike commits
+- Entry 7 (2026-09-01) — perf-analyze: ground truth, AI analysis, misinterpretation hunt, optimization judgement, §4 Task 3
