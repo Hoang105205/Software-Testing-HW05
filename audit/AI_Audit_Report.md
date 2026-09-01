@@ -148,3 +148,28 @@ ok [commit Spike], dong thoi gom doan chat vao ai audit log
 ```
 
 ---
+
+## Entry 7
+
+### AI tool name
+* Qoder (perf-analyze skill, Task 2 + Task 3)
+
+### Date and time
+* 2026-09-01
+
+### Prompt
+```text
+/perf-analyze - complete task 2 and task 3 for me; judge the AI's recommendations
+(classify each optimization as feasible or hallucinated, with reasoning)
+```
+
+### The AI output
+```text
+- Computed ground-truth metrics from the three raw .jtl logs with jtl_stats.py and pasted them into perf_report.md section 3.1 BEFORE any AI interpretation (Load 400/0%/p95 17 ms, Stress 1440/0%/p95 60 ms, Spike 320/0%/p95 29 ms)
+- Produced the uncorrected AI analysis (scenario interpretation, thresholds, 5 optimizations) saved verbatim to report/analysis/ai_analysis_raw.md
+- Misinterpretation hunt: checked every numeric AI claim against the tables - found 3 wrong (avg quoted as p95: 6 vs 17 ms; false "login fastest everywhere"; invented >=100-samples guarantee when Spike has 80) and 2 imprecise
+- Optimization judgement with verified stack facts from the SUT repo (Express 5 + sqlite3, single DB handle, no WAL, no indexes, no pool/cache/compression): WAL feasible, connection pool hallucinated, indexes valid-but-unjustified for this workflow, gzip feasible (63.7 KB avg payload measured from the jtl bytes column), cache unjustified
+- Wrote section 4 continuous performance testing: commit-trigger model with path filter, flow chart, rolling-median baseline, trade-offs
+```
+
+---
